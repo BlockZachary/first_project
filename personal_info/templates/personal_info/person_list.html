@@ -1,0 +1,81 @@
+{#纯粹使用html来写#}
+{#{% load mytags %}#}
+{#<!DOCTYPE html>#}
+{#<html lang="en">#}
+{#<head>#}
+{#    <meta charset="UTF-8">#}
+{#    <title>疫情人员登记表</title>#}
+{#</head>#}
+{#<body>#}
+{#    <table>#}
+{#        <thead>#}
+{#            <tr>#}
+{#                <td>ID</td>#}
+{#                <td>名字</td>#}
+{#                <td>年龄</td>#}
+{#                <td>性别</td>#}
+{#                <td>疑似</td>#}
+{#            </tr>#}
+{#        </thead>#}
+{#        <tbody>#}
+{#        {{ lst|add_filter}}#}
+{#        {% add_tag lst %}#}
+{#        {% for item in object_list %}#}
+{#            <tr>#}
+{#                <td>{{ item.id }}</td>#}
+{#                <td>{{ item.name }}</td>#}
+{#                <td>{{ item.age }}</td>#}
+{#                <td>{{ item.gender|yesno:"男,女" }}</td>#}
+{#                <td>{% if item.temperature > 37.4 %}是{% else %}否{% endif %}</td>#}
+{#            </tr>#}
+{#        {% empty %}#}
+{#            <tr>#}
+{#                <td colspan="5">暂无数据</td>#}
+{#            </tr>#}
+{#        {% endfor %}#}
+{#        </tbody>#}
+{#    </table>#}
+{#    <p><a href="{% url 'personal_info:person_create' %}">登记</a></p>#}
+{#</body>#}
+{#</html>#}
+
+
+{#使用继承base.html的方式来写#}
+{% extends 'personal_info/base.html' %}
+{% load mytags %}
+
+{% block title_content %}疫情人员登记表{% endblock %}
+
+{% block body_content %}
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>名字</th>
+            <th>年龄</th>
+            <th>性别</th>
+            <th>疑似</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        {{ lst|add_filter }}
+        {% add_tag lst %}
+        {% for item in object_list %}
+            <tr>
+                <td>{{ item.id }}</td>
+                <td><a href="{% url 'personal_info:person_detail' item.pk %}">{{ item.name }}</a></td>
+                <td>{{ item.age }}</td>
+                <td>{{ item.gender|yesno:"男,女" }}</td>
+                <td>{% if item.temperature > 37.4 %}是{% else %}否{% endif %}</td>
+                <td><a class="btn btn-sm btn-outline-success" href="{% url 'personal_info:person_update' item.pk %}">更新</a></td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="5">暂无数据</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <p><a class="btn btn-primary" href="{% url 'personal_info:person_create' %}">登记</a></p>
+{% endblock %}
